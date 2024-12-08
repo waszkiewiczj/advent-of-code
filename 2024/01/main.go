@@ -54,18 +54,36 @@ func parseInput(filepath string) ([][]int, error) {
 }
 
 func part1(input [][]int) int {
-	left := (*IntHeap)(&input[0])
-	heap.Init(left)
-	right := (*IntHeap)(&input[1])
-	heap.Init(right)
+	left := append(IntHeap{}, input[0]...)
+	heap.Init(&left)
+	right := append(IntHeap{}, input[1]...)
+	heap.Init(&right)
 
 	result := 0
 	for left.Len() > 0 && right.Len() > 0 {
-		l := heap.Pop(left).(int)
-		r := heap.Pop(right).(int)
+		l := heap.Pop(&left).(int)
+		r := heap.Pop(&right).(int)
 		diff := int(math.Abs(float64(l) - float64(r)))
 		result += diff
 	}
+	return result
+}
+
+func part2(input [][]int) int {
+	counts := make(map[int]int)
+	for _, r := range input[1] {
+		counts[r]++
+	}
+
+	result := 0
+	for _, l := range input[0] {
+		count, ok := counts[l]
+		if !ok {
+			count = 0
+		}
+		result += (count * l)
+	}
+
 	return result
 }
 
@@ -74,6 +92,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
 	p1 := part1(input)
-	fmt.Printf("PART 1: %v", p1)
+	fmt.Printf("PART 1: %v\n", p1)
+
+	p2 := part2(input)
+	fmt.Printf("PART 2: %v\n", p2)
 }
