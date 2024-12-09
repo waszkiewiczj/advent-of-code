@@ -1,1 +1,4 @@
 .DS_Store
+
+# exclude test input
+test.txt
