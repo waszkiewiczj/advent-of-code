@@ -43,7 +43,6 @@ func parseInput(filepath string) ([][]int, error) {
 			}
 			result[idx] = append(result[idx], number)
 		}
-		fmt.Println()
 	}
 
 	if err = scanner.Err(); err != nil {
