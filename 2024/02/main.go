@@ -38,18 +38,38 @@ func parseInput(filepath string) ([][]int, error) {
 	return result, nil
 }
 
+func isSafe(report []int) bool {
+	for idx := 1; idx < len(report)-1; idx++ {
+		diff1 := report[idx] - report[idx-1]
+		diff2 := report[idx+1] - report[idx]
+		if diff1*diff2 <= 0 || math.Abs(float64(diff1)) > 3 || math.Abs(float64(diff2)) > 3 {
+			return false
+		}
+	}
+	return true
+}
+
 func part1(input [][]int) int {
 	result := 0
-	for _, level := range input {
-		isSafe := true
-		for idx := 1; idx < len(level)-1; idx++ {
-			diff1 := level[idx] - level[idx-1]
-			diff2 := level[idx+1] - level[idx]
-			if diff1*diff2 <= 0 || math.Abs(float64(diff1)) > 3 || math.Abs(float64(diff2)) > 3 {
-				isSafe = false
-			}
+	for _, report := range input {
+		if isSafe(report) {
+			result++
 		}
-		if isSafe {
+	}
+	return result
+}
+
+func part2(input [][]int) int {
+	result := 0
+	for _, report := range input {
+		safe := isSafe(report)
+		for idx := 0; idx < len(report) && !safe; idx++ {
+			newReport := []int{}
+			newReport = append(newReport, report[:idx]...)
+			newReport = append(newReport, report[idx+1:]...)
+			safe = isSafe(newReport)
+		}
+		if safe {
 			result++
 		}
 	}
@@ -64,4 +84,7 @@ func main() {
 
 	p1 := part1(input)
 	fmt.Printf("PART 1: %v\n", p1)
+
+	p2 := part2(input)
+	fmt.Printf("PART 2: %v\n", p2)
 }
