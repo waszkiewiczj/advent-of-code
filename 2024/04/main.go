@@ -32,7 +32,7 @@ func isXMAS(s string) bool {
 }
 
 func isXMASHorizontal(input []string, i, j int) bool {
-	if j+4 < len(input[i]) {
+	if j+4 <= len(input[i]) {
 		s := input[i][j : j+4]
 		return isXMAS(s)
 	}
