@@ -81,12 +81,37 @@ func countXMAS(input []string, i, j int) int {
 	return result
 }
 
+func isX_MAS(input []string, i, j int) bool {
+	if i+2 >= len(input) || j+2 >= len(input[i+2]) {
+		return false
+	}
+	diag := ""
+	antidiag := ""
+	for z := 0; z < 3; z++ {
+		diag += string(input[i+z][j+z])
+		antidiag += string(input[i+z][j+2-z])
+	}
+	return (diag == "MAS" || diag == "SAM") && (antidiag == "SAM" || antidiag == "MAS")
+}
+
 func part1(input []string) int {
 	result := 0
 	for i := 0; i < len(input); i++ {
 		for j := 0; j < len(input[i]); j++ {
 			count := countXMAS(input, i, j)
 			result += count
+		}
+	}
+	return result
+}
+
+func part2(input []string) int {
+	result := 0
+	for i := 0; i < len(input); i++ {
+		for j := 0; j < len(input[i]); j++ {
+			if isX_MAS(input, i, j) {
+				result++
+			}
 		}
 	}
 	return result
@@ -99,4 +124,5 @@ func main() {
 	}
 
 	fmt.Printf("PART 1: %v\n", part1(input))
+	fmt.Printf("PART 2: %v\n", part2(input))
 }
