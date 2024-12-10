@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 )
 
 func parseInput(filepath string) (string, error) {
@@ -11,22 +13,34 @@ func parseInput(filepath string) (string, error) {
 }
 
 func part1(input string) int {
+	multiplies := [][]int{}
 	for idx := 0; idx < len(input); idx++ {
 		if idx+4 < len(input) && input[idx:idx+4] == "mul(" {
 			newIdx := idx + 4
 			for ; newIdx < len(input) && string(input[newIdx]) != ")"; newIdx++ {
 			}
 			if newIdx < len(input) {
-				numbersRaw := input[idx+4 : newIdx]
-				fmt.Println(numbersRaw)
+				argsRaw := input[idx+4 : newIdx]
+				numbersRaw := strings.Split(argsRaw, ",")
+				if len(numbersRaw) == 2 {
+					n1, err1 := strconv.Atoi(numbersRaw[0])
+					n2, err2 := strconv.Atoi(numbersRaw[1])
+					if err1 == nil && err2 == nil {
+						multiplies = append(multiplies, []int{n1, n2})
+					}
+				}
 			}
 		}
 	}
-	return 0
+	result := 0
+	for _, pair := range multiplies {
+		result += pair[0] * pair[1]
+	}
+	return result
 }
 
 func main() {
-	input, err := parseInput("test.txt")
+	input, err := parseInput("input.txt")
 	if err != nil {
 		panic(err)
 	}
