@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -88,8 +89,49 @@ func part1(rules, updates [][]int) int {
 	return result
 }
 
+type SortableUpdate struct {
+	update []int
+	rules  [][]int
+}
+
+func (s SortableUpdate) Len() int { return len(s.update) }
+
+func (s SortableUpdate) Swap(i, j int) { s.update[i], s.update[j] = s.update[j], s.update[i] }
+
+func (s SortableUpdate) Less(i, j int) bool {
+	for _, rule := range s.rules {
+		if s.update[i] == rule[0] && s.update[j] == rule[1] {
+			return true
+		}
+	}
+	return false
+}
+
+func fixUpdate(rules [][]int, update []int) []int {
+	s := SortableUpdate{
+		update: update,
+		rules:  rules,
+	}
+	sort.Sort(s)
+	return s.update
+}
+
+func part2(rules, updates [][]int) int {
+	result := 0
+
+	for _, update := range updates {
+		if !isValidUpdate(rules, update) {
+			validUpdate := fixUpdate(rules, update)
+			result += validUpdate[len(validUpdate)/2]
+		}
+	}
+
+	return result
+}
+
 func main() {
 	inputRules, inputUpdates := parseInput("input.txt")
 
 	fmt.Printf("PART 1: %v\n", part1(inputRules, inputUpdates))
+	fmt.Printf("PART 2: %v\n", part2(inputRules, inputUpdates))
 }
