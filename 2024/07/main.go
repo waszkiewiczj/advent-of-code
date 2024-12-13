@@ -13,10 +13,6 @@ type Calibration struct {
 	numbers   []int
 }
 
-func (c *Calibration) isTrue() {
-
-}
-
 func parseInput(filepath string) []Calibration {
 	result := []Calibration{}
 	file, err := os.Open(filepath)
@@ -47,31 +43,62 @@ func parseInput(filepath string) []Calibration {
 	return result
 }
 
+type Operator func(x, y int) int
+
+func add(x, y int) int {
+	return x + y
+}
+
+func mul(x, y int) int {
+	return x * y
+}
+
+func concat(x, y int) int {
+	s := string(x) + string(y)
+	res, err := strconv.Atoi(s)
+	if err != nil {
+		panic(err)
+	}
+	return res
+}
+
+func evaluate(testValue int, numbers []int, currentValue int, operators []Operator) bool {
+	if currentValue > testValue {
+		return false
+	}
+	if len(numbers) == 0 {
+		return testValue == currentValue
+	}
+	for _, op := range operators {
+		if evaluate(testValue, numbers, op(currentValue, numbers[0]), operators) {
+			return true
+		}
+	}
+	return false
+}
+
 func part1(input []Calibration) int {
 	result := 0
 	for _, c := range input {
-		if evaluate(c.testValue, c.numbers, 0) {
+		if evaluate(c.testValue, c.numbers, 0, []Operator{add, mul}) {
 			result += c.testValue
 		}
 	}
 	return result
 }
 
-func evaluate(testValue int, numbers []int, currentValue int) bool {
-	if len(numbers) == 0 {
-		return testValue == currentValue
+func part2(input []Calibration) int {
+	result := 0
+	for _, c := range input {
+		if evaluate(c.testValue, c.numbers, 0, []Operator{add, mul, concat}) {
+			result += c.testValue
+		}
 	}
-	if evaluate(testValue, numbers[1:], currentValue+numbers[0]) {
-		return true
-	}
-	if evaluate(testValue, numbers[1:], currentValue*numbers[0]) {
-		return true
-	}
-	return false
+	return result
 }
-
 func main() {
-	input := parseInput("input.txt")
+	input := parseInput("test.txt")
 
 	fmt.Printf("PART 1: %v\n", part1(input))
+	fmt.Printf("PART 2: %v\n", part2(input))
 }
