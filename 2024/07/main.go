@@ -54,7 +54,7 @@ func mul(x, y int) int {
 }
 
 func concat(x, y int) int {
-	s := string(x) + string(y)
+	s := strconv.Itoa(x) + strconv.Itoa(y)
 	res, err := strconv.Atoi(s)
 	if err != nil {
 		panic(err)
@@ -70,7 +70,7 @@ func evaluate(testValue int, numbers []int, currentValue int, operators []Operat
 		return testValue == currentValue
 	}
 	for _, op := range operators {
-		if evaluate(testValue, numbers, op(currentValue, numbers[0]), operators) {
+		if evaluate(testValue, numbers[1:], op(currentValue, numbers[0]), operators) {
 			return true
 		}
 	}
@@ -97,7 +97,7 @@ func part2(input []Calibration) int {
 	return result
 }
 func main() {
-	input := parseInput("test.txt")
+	input := parseInput("input.txt")
 
 	fmt.Printf("PART 1: %v\n", part1(input))
 	fmt.Printf("PART 2: %v\n", part2(input))
