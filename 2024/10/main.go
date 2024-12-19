@@ -70,27 +70,18 @@ func part1(data [][]int) int {
 	return result
 }
 
-func dfs2(data [][]int, x, y int, result *int) {
-	if data[x][y] == 9 {
-		*result++
-	} else {
-		for _, d := range [][]int{{1, 0}, {0, 1}, {-1, 0}, {0, -1}} {
-			xx := x + d[0]
-			yy := y + d[1]
-			if xx >= 0 && xx < len(data) &&
-				yy >= 0 && yy < len(data[0]) &&
-				data[xx][yy]-data[x][y] == 1 {
-				dfs2(data, xx, yy, result)
-			}
-		}
-	}
-}
-
 func part2(data [][]int) int {
 	starts := getStartPoints(data)
 	result := 0
+	stop := func(val, x, y int) bool {
+		if val == 9 {
+			result++
+			return true
+		}
+		return false
+	}
 	for _, start := range starts {
-		dfs2(data, start[0], start[1], &result)
+		dfs(data, start[0], start[1], stop)
 	}
 	return result
 }
