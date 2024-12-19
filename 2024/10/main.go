@@ -91,8 +91,39 @@ func part1(data [][]int) int {
 	return result
 }
 
+func dfs(data [][]int, x, y int, result *int) {
+	if data[x][y] == 9 {
+		*result++
+	} else {
+		for _, d := range [][]int{{1, 0}, {0, 1}, {-1, 0}, {0, -1}} {
+			xx := x + d[0]
+			yy := y + d[1]
+			if xx >= 0 && xx < len(data) &&
+				yy >= 0 && yy < len(data[0]) &&
+				data[xx][yy]-data[x][y] == 1 {
+				dfs(data, xx, yy, result)
+			}
+		}
+	}
+}
+
+func part2(data [][]int) int {
+	starts := [][]int{}
+	iterateOverElements(data, func(x, y, val int) {
+		if val == 0 {
+			starts = append(starts, []int{x, y})
+		}
+	})
+	result := 0
+	for _, start := range starts {
+		dfs(data, start[0], start[1], &result)
+	}
+	return result
+}
+
 func main() {
 	input := parseInput("input.txt")
 
-	fmt.Printf("PART 1: %v\n", part1(input))
+	// fmt.Printf("PART 1: %v\n", part1(input))
+	fmt.Printf("PART 2: %v\n", part2(input))
 }
